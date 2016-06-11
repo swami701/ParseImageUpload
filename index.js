@@ -23,8 +23,17 @@ app.get('/relationOfDevProd', function (req, res) {
   var jsKey = process.env.PARSE_JSKEY_PROD;
   Parse.initialize(appId, jsKey);
 
+  var imgUrlRel = require(process.env.IMG_URL_REL);
+  var devEventIds = [];
+  for (var key in imgUrlRel) {
+    if (imgUrlRel.hasOwnProperty(key)) {
+      devEventIds.push(key);
+    }
+  }
+
   var result = {};
   var eventQuery = new Parse.Query("Event");
+  eventQuery.containedIn("oldEventId", devEventIds);
   eventQuery.each(function (event) {
     result[event.get("oldEventId")] = event.id;
   }).then(function () {
